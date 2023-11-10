@@ -8,27 +8,28 @@
 </head>
 <body>
     <div>
-        <button>Crear ProductManager</button>
-        <button>Agregar Producto</button>
-        <button>Eliminar Producto</button>
-        <button>Buscar Producto por ID</button>
-        <button>Mostrar Producto</button>
+        <button id="crear">Crear ProductManager</button>
+        <button id="agregar" disabled>Agregar Producto</button>
+        <button id="eliminar" disabled>Eliminar Producto</button>
+        <button id="buscar" disabled>Buscar Producto por ID</button>
+        <button id="mostrar" disabled>Mostrar Producto</button>
     </div>
     <div class="divForm">
-        <form action="" method="post">
+        <form action="index.html" method="post">
             <label for="titulo">Titulo: </label>
             <input type="text" placeholder="Ingrese Titulo">
             
             <label for="descripcion">Descripcion</label>
-            <input type="descripcion" placeholder="Ingrese Descripcion">
+            <input id="descripcion" type="descripcion" placeholder="Ingrese Descripcion">
            
             <label for="imagen">Imagen</label>
-            <input type="url" placeholder="Ingrese imagen">
+            <input id="img" type="url" placeholder="Ingrese imagen">
             
             <label for="codidgo">Codigo: </label>
-            <input type="number" placeholder="Ingrese codigo">
-            
+            <input id="code" type="number" placeholder="Ingrese codigo">
+            <input type="submit" value="ENVIAR">
         </form>
     </div>
 </body>
+<script src="app.js"></script>
 </html>

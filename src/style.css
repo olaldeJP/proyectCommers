@@ -1,5 +1,7 @@
 .divForm{
+    padding-top: 50px;
     display: flex;
-    background-color: blue;
     align-items: center;
+    width: 10%;
+    height: 140px;
 }
