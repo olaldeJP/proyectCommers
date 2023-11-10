@@ -66,10 +66,8 @@ class ProductManager{
     
 
     async getProducts(){
-         
         const array=JSON.parse(await fs.readFile(this.#ruta,'utf-8'))
         return array
-        
     }
     
     
