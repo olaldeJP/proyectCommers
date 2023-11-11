@@ -1,4 +1,4 @@
-import fs from 'fs/promises'
+import fs from 'fs'
 import {Product} from './product.js'
 
 
@@ -8,14 +8,20 @@ function generarId() {
   }
   
   
-class ProductManager{
+  export class  ProductManager {
     #ruta
-    #arrayProcutos=[]
+    #arrayProcutos
  
 
     constructor(ruta)
-    {
-        this.#ruta=ruta
+    {   
+        this.#ruta=`../dataBase/${ruta}`
+        if(fs.existsSync(this.#ruta)){
+            this.#arrayProcutos=JSON.parse(fs.readFileSync(this.#ruta))
+        }else{
+            this.#arrayProcutos=[]
+            fs.writeFileSync(this.#ruta,JSON.stringify(this.#arrayProcutos))
+        }
     }
     
     #validarCampos(product)
@@ -28,27 +34,22 @@ class ProductManager{
                     }
         } 
     #validarCodigo(codigo){
-        
+            
             const product=this.#arrayProcutos.find(product=> product.code === codigo)
+        
             if ( product){ return false    }
            
             return true
     }
     
     async addProduct(newProduct)
-        {       
-               try{ 
-                 this.#arrayProcutos=JSON.parse(await fs.readFile(this.#ruta,'utf-8'))
-                 
-                }
-                catch(error){ 
-                }
-            
+        {     
                 if(this.#validarCampos(newProduct)){
                     if(this.#validarCodigo(newProduct.code)){
                         newProduct.id=generarId()
                         this.#arrayProcutos.push(newProduct)
-                        await fs.writeFile(this.#ruta,JSON.stringify(this.#arrayProcutos,null,2))
+                
+                         await fs.promises.writeFile(this.#ruta,JSON.stringify(this.#arrayProcutos,null,2))
                         console.log('Producto agregado exitosamennte')
                         return newProduct
                         
@@ -57,7 +58,7 @@ class ProductManager{
                         return false
                     }
                 }
-             
+            
                
         }
           
@@ -66,14 +67,18 @@ class ProductManager{
     
 
     async getProducts(){
-        const array=JSON.parse(await fs.readFile(this.#ruta,'utf-8'))
-        return array
+       
+            return [...this.#arrayProcutos]
+
     }
     
     
     async getProductById(id){
-        try{ this.#arrayProcutos=JSON.parse(await fs.readFile(this.#ruta,'utf-8',2))}
-        catch{}
+        try{ 
+            this.#arrayProcutos=JSON.parse(await fs.promises.readFile(this.#ruta,'utf-8'))}
+        catch{
+            console.log('Error Al Leer Archivo')
+        }
     
         let producto=this.#arrayProcutos.find((product) => product.id === id);
         if(!producto){
@@ -87,21 +92,20 @@ class ProductManager{
     }
  
     async deleteProductByID(id) {
-        const array=JSON.parse(await fs.readFile(this.#ruta,'utf-8'))
-        const newArray=array.filter(product => product.id !== id)
-         await fs.writeFile(this.#ruta,JSON.stringify(newArray,null,2))
+       
+        
+        const newArray=this.#arrayProcutos.filter(product => product.id !== id)
+        await fs.promises.writeFile(this.#ruta,JSON.stringify(newArray),null,2)
+        this.#arrayProcutos=newArray
     }
     
     
    async updateProduct(id,campo,nuevoValor){
         
     
+        if(this.#arrayProcutos && (campo==='title'|| campo==='description' ||  campo==='price' || campo==='code'  || campo==='thumbnail' || campo==='stock'))
+        {  
         
-        let product= await this.getProductById(id); 
-        
-        if(product && (campo==='title'|| campo==='description' ||  campo==='price' || campo==='code'  || campo==='thumbnail' || campo==='stock'))
-        { 
-            this.#arrayProcutos=JSON.parse(await fs.readFile(this.#ruta,'utf-8'))    
             for (let i=0 ; this.#arrayProcutos.length ; i++){
            
             if(this.#arrayProcutos[i].id===id){
@@ -115,11 +119,11 @@ class ProductManager{
           
         
          try{
-            await fs.writeFile(this.#ruta, JSON.stringify(this.#arrayProcutos,null,2))
+            await fs.promises.writeFile(this.#ruta, JSON.stringify(this.#arrayProcutos),null,2)
      
          }catch(error){
            
-            console.log('Operacion no valida')
+            throw new Error('OPERACION INVALIDA')
          }
      
     }
@@ -128,7 +132,7 @@ class ProductManager{
 
    
 
-
+/*
 const p1 = {
     title: 'T1',
     description: 'D1',
@@ -150,7 +154,7 @@ const p3 = {
     description: 'D3',
     price: 3,
     thumbnail: '3',
-    code: '3',
+    code: '1',
     stock: 5
 }
 const p4 = {
@@ -165,14 +169,4 @@ const p4 = {
 
 const pm=new ProductManager('dbProducts.JSON')
 
-await pm.addProduct(p1)
-await pm.addProduct(p2)
-await pm.addProduct(p3)
-await pm.addProduct(p4)
-
-
-const p=await pm.getProductById(3)
-await pm.deleteProductByID(2)
-const array=await pm.getProducts()
-
-await pm.updateProduct(3,'description','NuevoTitulo')
+*/

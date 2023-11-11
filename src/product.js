@@ -2,7 +2,7 @@
 export class Product{
 
     constructor(title,description,price,thumbnail,code,stock){
-        this.id=generarId()
+      
         this.title=title
         this.description=description
         this.price=price

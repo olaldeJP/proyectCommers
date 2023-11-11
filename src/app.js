@@ -1,14 +1,28 @@
-const divF=document.querySelector(".divForm")
-const crear=document.querySelector("#crear")
-const eliminar=document.querySelector('#eliminar')
-const buscar=document.querySelector('#buscar')
-const agregar=document.querySelector('#agregar')
-const mostrar=document.querySelector('#mostrar')
+import { ProductManager } from "./productManager.js";
+import { Product } from "./product.js";
+import express from 'express';
 
-crear.addEventListener("click",()=>{
-    agregar.disabled=false
-    eliminar.disabled=false
-    buscar.disabled=false
-    agregar.disabled=false
-    mostrar.disabled=false
+const app = express();
+const pm= new ProductManager('productsDB.json')
+
+app.use(express.urlencoded( {extended :true }))
+
+
+app.get('/', (req, res) => {
+    res.send('Se Creo la Base de datos')
+});
+
+app.get('/agregar',async (req,res)=>{
+
+    const producto=new Product('Titulo1','Descripcion 1',20,'unThumbnail',3,10)
+   
+    pm.addProduct(producto)
+    console.log(await pm.getProducts())
+    res.send(producto)
 })
+
+app.listen(8080,()=>{
+    console.log('Servidor Funcionando')
+})
+
+
